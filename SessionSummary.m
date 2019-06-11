@@ -171,10 +171,10 @@ if nargin > 0
         GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.Rewarded)*1000);
         %GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
-        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.SidePokeDur*1000,0,'^k');
+        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
         GUIHandles.Axes.SidePokeDur.Expected = plot(GUIHandles.Axes.SidePokeDur.MainHandle,...
             min(temp)*1000:max(temp)*1000,...
-            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp)*1000:max(temp)*1000,TaskParameters.GUI.SidePokeDurTau*1000),'c');
+            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp)*1000:max(temp)*1000,TaskParameters.GUI.FeedbackDelayTau*1000),'c');
     else
         GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.EarlySout)*1000);
         GUIHandles.Axes.SidePokeDur.Hist.BinWidth = 50;
