@@ -96,7 +96,7 @@ end
 %% Center port
 
 if sum(~isnan(BpodSystem.Data.Custom.CenterPokeDur)) > 10
-    TaskParameters.GUI.StimDelay = prctile(BpodSystem.Data.Custom.CenterPokeDur,TaskParameters.GUI.TargetStimGuided);
+    TaskParameters.GUI.StimDelay = prctile(BpodSystem.Data.Custom.CenterPokeDur,100-TaskParameters.GUI.TargetStimGuided);
 else
     TaskParameters.GUI.StimDelay = 0;
 end
