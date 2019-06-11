@@ -79,17 +79,16 @@ end
 
 %% Fictive Reward (Click Trains)
 
-if BpodSystem.Data.Custom.BaitedL
-    BpodSystem.Data.Custom.LeftClickTrain{iTrial+1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
-    BpodSystem.Data.Custom.RightClickTrain{iTrial+1} = min(BpodSystem.Data.Custom.LeftClickTrain{1});
+if BpodSystem.Data.Custom.BaitedL(end)
+    BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
+    BpodSystem.Data.Custom.RightClickTrain{1} = min(BpodSystem.Data.Custom.LeftClickTrain{1});
 else
-    BpodSystem.Data.Custom.RightClickTrain{iTrial+1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
-    BpodSystem.Data.Custom.LeftClickTrain{iTrial+1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
+    BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
+    BpodSystem.Data.Custom.LeftClickTrain{1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
 end
-
 if ~BpodSystem.EmulatorMode
-    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{iTrial+1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{iTrial+1}))*5);
-    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{iTrial+1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{iTrial+1}))*5);
+    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
+    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
 end
 
 % Set delay durs

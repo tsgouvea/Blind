@@ -59,19 +59,6 @@ BpodParameterGUI('init', TaskParameters);
 
 %% Initializing data (trial type) vectors
 BpodSystem.Data.Custom.BaitedL = rand < .5; % BaitedR = not(BaitedL)
-
-if BpodSystem.Data.Custom.BaitedL
-    BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
-    BpodSystem.Data.Custom.RightClickTrain{1} = min(BpodSystem.Data.Custom.LeftClickTrain{1});
-else
-    BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
-    BpodSystem.Data.Custom.LeftClickTrain{1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
-end
-if ~BpodSystem.EmulatorMode
-    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
-    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
-end
-
 BpodSystem.Data.Custom.ChoiceLeft(1) = NaN;
 BpodSystem.Data.Custom.BrokeFix(1) = false;
 BpodSystem.Data.Custom.EarlySout(1) = false;
@@ -90,13 +77,20 @@ BpodSystem.Data.Custom = orderfields(BpodSystem.Data.Custom);
 
 %% Set up PulsePal
 load PulsePalParamStimulus.mat
-load PulsePalParamFeedback.mat
+% load PulsePalParamFeedback.mat
 BpodSystem.Data.Custom.PulsePalParamStimulus=PulsePalParamStimulus;
-BpodSystem.Data.Custom.PulsePalParamFeedback=PulsePalParamFeedback;
-clear PulsePalParamFeedback PulsePalParamStimulus
+% BpodSystem.Data.Custom.PulsePalParamFeedback=PulsePalParamFeedback;
+clear PulsePalParamStimulus %PulsePalParamFeedback
 BpodSystem.SoftCodeHandlerFunction = 'SoftCodeHandler';
+
+if BpodSystem.Data.Custom.BaitedL
+    BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
+    BpodSystem.Data.Custom.RightClickTrain{1} = min(BpodSystem.Data.Custom.LeftClickTrain{1});
+else
+    BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
+    BpodSystem.Data.Custom.LeftClickTrain{1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
+end
 if ~BpodSystem.EmulatorMode
-    ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamStimulus);
     SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
     SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
 end
