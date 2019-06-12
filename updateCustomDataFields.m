@@ -18,6 +18,7 @@ ChoicePortOut = strcat('Port',num2str(ChoicePort),'Out');
 BpodSystem.Data.Custom.StimGuided(iTrial) = any(strcmp('Cin_late',statesThisTrial));
 BpodSystem.Data.Custom.BrokeFix(iTrial) = any(strcmp('BrokeFix',statesThisTrial));
 BpodSystem.Data.Custom.EarlySout(iTrial) = any(strcmp('EarlySout',statesThisTrial));
+BpodSystem.Data.Custom.ChoiceMiss(iTrial) = any(strcmp('choice_miss',statesThisTrial));
 BpodSystem.Data.Custom.Rewarded(iTrial) = any(strncmp('water_',statesThisTrial,6));
 BpodSystem.Data.Custom.RewardMagnitude(iTrial) = TaskParameters.GUI.rewardAmount;
 for n = statesThisTrial
@@ -50,7 +51,7 @@ if any(strncmp('start',statesThisTrial,5))
                 candidates = candidates(candidates>BpodSystem.Data.RawEvents.Trial{iTrial}.States.(graceState)(end,end));
             end
             if ~isempty(candidates)
-                BpodSystem.Data.Custom.SidePokeDur(iTrial) = min(candidates);
+                BpodSystem.Data.Custom.SidePokeDur(iTrial) = min(candidates) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
             end
         end
     end
@@ -62,6 +63,7 @@ end
 BpodSystem.Data.Custom.ChoiceLeft(iTrial+1) = NaN;
 BpodSystem.Data.Custom.BrokeFix(iTrial+1) = false;
 BpodSystem.Data.Custom.EarlySout(iTrial+1) = false;
+BpodSystem.Data.Custom.ChoiceMiss(iTrial+1) = false;
 BpodSystem.Data.Custom.StimGuided(iTrial+1) = false;
 BpodSystem.Data.Custom.Rewarded(iTrial+1) = false;
 BpodSystem.Data.Custom.Grace(iTrial+1) = false;

@@ -62,6 +62,7 @@ BpodSystem.Data.Custom.BaitedL = rand < .5; % BaitedR = not(BaitedL)
 BpodSystem.Data.Custom.ChoiceLeft(1) = NaN;
 BpodSystem.Data.Custom.BrokeFix(1) = false;
 BpodSystem.Data.Custom.EarlySout(1) = false;
+BpodSystem.Data.Custom.ChoiceMiss(1) = false;
 BpodSystem.Data.Custom.StimGuided(1) = false;
 BpodSystem.Data.Custom.Rewarded(1) = false;
 BpodSystem.Data.Custom.Grace(1) = false;

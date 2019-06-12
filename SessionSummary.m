@@ -23,7 +23,9 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
 
     %% Outcome
     axes(GUIHandles.Axes.OutcomePlot.MainHandle)
-    GUIHandles.Axes.OutcomePlot.Fict = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','none', 'MarkerSize',8);
+    GUIHandles.Axes.OutcomePlot.StimL = line(-1,.75, 'LineStyle','none','Marker','^','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
+    GUIHandles.Axes.OutcomePlot.StimR = line(-1,.25, 'LineStyle','none','Marker','v','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
+    GUIHandles.Axes.OutcomePlot.Fict = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
     GUIHandles.Axes.OutcomePlot.CurrentTrialCircle = line(-1,0.5, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.CurrentTrialCross = line(-1,0.5, 'LineStyle','none','Marker','+','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.Rewarded = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
@@ -91,6 +93,7 @@ if nargin > 0
     ChoiceLeft = Data.Custom.ChoiceLeft;
     Rewarded = Data.Custom.Rewarded;
     if ~isempty(Rewarded)
+
         indxToPlot = mn:iTrial-1;
 
         ndxRwd = Rewarded(indxToPlot) == 1;
@@ -98,12 +101,12 @@ if nargin > 0
         Ydata = ChoiceLeft(indxToPlot); Ydata = Ydata(ndxRwd);
         set(GUIHandles.Axes.OutcomePlot.Rewarded, 'xdata', Xdata, 'ydata', Ydata);
         
-        ndxUrwd = Rewarded(indxToPlot) == 0 & not(isnan(Data.Custom.ChoiceLeft(indxToPlot)));
+        ndxUrwd = Rewarded == 0 & not(Data.Custom.ChoiceMiss) & not(Data.Custom.EarlySout); ndxUrwd = ndxUrwd(indxToPlot);
         Xdata = indxToPlot(ndxUrwd);
         Ydata = ChoiceLeft(indxToPlot); Ydata = Ydata(ndxUrwd);
         set(GUIHandles.Axes.OutcomePlot.Unrewarded, 'xdata', Xdata, 'ydata', Ydata);
 
-        ndxNocho = isnan(ChoiceLeft(indxToPlot)) & ~Data.Custom.BrokeFix(indxToPlot);
+        ndxNocho = Data.Custom.ChoiceMiss(indxToPlot);
         Xdata = indxToPlot(ndxNocho);
         Ydata = ones(size(Xdata))*.5;
         set(GUIHandles.Axes.OutcomePlot.NoResponse, 'xdata', Xdata, 'ydata', Ydata);
@@ -113,6 +116,19 @@ if nargin > 0
         Xdata = [indxToPlot(Data.Custom.BaitedL(indxToPlot)==1 & ~Data.Custom.StimGuided(indxToPlot)), ...
             indxToPlot(Data.Custom.BaitedL(indxToPlot)==0 & ~Data.Custom.StimGuided(indxToPlot))];
         set(GUIHandles.Axes.OutcomePlot.Fict, 'xdata', Xdata, 'ydata', Ydata);
+        
+%         GUIHandles.Axes.OutcomePlot.StimL = line(-1,.75, 'LineStyle','none','Marker','^','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
+%         GUIHandles.Axes.OutcomePlot.StimR = line(-1,.25, 'LineStyle','none','Marker','v','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
+
+        ndxStimL = Data.Custom.BaitedL(indxToPlot)==1 & Data.Custom.StimGuided(indxToPlot);
+        Ydata = .75*ones(sum(ndxStimL),1);
+        Xdata = indxToPlot(ndxStimL);
+        set(GUIHandles.Axes.OutcomePlot.StimL, 'xdata', Xdata, 'ydata', Ydata);
+        
+        ndxStimR = Data.Custom.BaitedL(indxToPlot)==0 & Data.Custom.StimGuided(indxToPlot);
+        Ydata = .25*ones(sum(ndxStimR),1);
+        Xdata = indxToPlot(ndxStimR);
+        set(GUIHandles.Axes.OutcomePlot.StimR, 'xdata', Xdata, 'ydata', Ydata);        
     end
     if ~isempty(Data.Custom.BrokeFix)
         indxToPlot = mn:iTrial-1;
@@ -151,45 +167,45 @@ if nargin > 0
     temp = Data.Custom.CenterPokeDur;
     temp = min(temp,prctile(temp,99));
     GUIHandles.Axes.CenterPokeDur.Hist = histogram(GUIHandles.Axes.CenterPokeDur.MainHandle,...
-        temp*1000);
+        temp);
     GUIHandles.Axes.CenterPokeDur.Hist.BinWidth = 50;
     GUIHandles.Axes.CenterPokeDur.Hist.EdgeColor = 'none';
     GUIHandles.Axes.CenterPokeDur.HistEarly = histogram(GUIHandles.Axes.CenterPokeDur.MainHandle,...
-        temp(Data.Custom.BrokeFix)*1000);
+        temp(Data.Custom.BrokeFix));
     GUIHandles.Axes.CenterPokeDur.HistEarly.BinWidth = 50;
     GUIHandles.Axes.CenterPokeDur.HistEarly.EdgeColor = 'none';
-    GUIHandles.Axes.CenterPokeDur.CutOff = plot(GUIHandles.Axes.CenterPokeDur.MainHandle,TaskParameters.GUI.StimDelay*1000,0,'^k');
+    GUIHandles.Axes.CenterPokeDur.CutOff = plot(GUIHandles.Axes.CenterPokeDur.MainHandle,TaskParameters.GUI.StimDelay,0,'^k');
 
     %% Feedback delay
     cla(GUIHandles.Axes.SidePokeDur.MainHandle)
     temp = Data.Custom.SidePokeDur;
     temp = min(temp,prctile(temp,99));
     if isfield(TaskParameters,'GUIMeta') && strcmp(TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection},'TruncExp')
-        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(Data.Custom.Rewarded)*1000);
+        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(Data.Custom.Rewarded));
         %GUIHandles.Axes.SidePokeDur.Hist.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.Hist.EdgeColor = 'none';
-        GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.Rewarded)*1000);
+        GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.Rewarded));
         %GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
-        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
+        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay,0,'^k');
         GUIHandles.Axes.SidePokeDur.Expected = plot(GUIHandles.Axes.SidePokeDur.MainHandle,...
-            min(temp)*1000:max(temp)*1000,...
-            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp)*1000:max(temp)*1000,TaskParameters.GUI.FeedbackDelayTau*1000),'c');
+            min(temp):max(temp),...
+            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp):max(temp),TaskParameters.GUI.FeedbackDelayTau),'c');
     else
-        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.EarlySout)*1000);
+        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.EarlySout));
         GUIHandles.Axes.SidePokeDur.Hist.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.Hist.EdgeColor = 'none';
         GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,...
-            temp(Data.Custom.EarlySout)*1000);
+            temp(Data.Custom.EarlySout));
         GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
-        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
+        GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay,0,'^k');
     end
 
     %% Stim Guided
     
-    GUIHandles.Axes.StimGuided.StimGuided.XData = cumsum(Data.Custom.StimGuided==1);
-    GUIHandles.Axes.StimGuided.StimGuided.YData = cumsum(Data.Custom.StimGuided==0);
+    GUIHandles.Axes.StimGuided.StimGuided.XData = cumsum(Data.Custom.StimGuided(1:end-1)==1);
+    GUIHandles.Axes.StimGuided.StimGuided.YData = cumsum(Data.Custom.StimGuided(1:end-1)==0);
     
 end
 end
