@@ -89,6 +89,7 @@ else
     BpodSystem.Data.Custom.LeftClickTrain{1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
 end
 if ~BpodSystem.EmulatorMode
+    ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamStimulus);
     SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
     SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
 end
