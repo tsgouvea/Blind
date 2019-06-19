@@ -38,20 +38,20 @@ end
 %% Side ports
 
 if any(strncmp('start',statesThisTrial,5))
-    Sin = statesThisTrial{strncmp('start',statesThisTrial,5)};
+    start_S = statesThisTrial{strncmp('start',statesThisTrial,5)};
     if any(strcmp('EarlySout',statesThisTrial))
-        lastState = statesThisTrial{find(strcmp('EarlySout',statesThisTrial))-1};
-        BpodSystem.Data.Custom.SidePokeDur(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(lastState)(1,1) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
+        lastState = statesThisTrial{find(strcmp('EarlySout',statesThisTrial))-1}; % a grace period state
+        BpodSystem.Data.Custom.SidePokeDur(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(lastState)(1,1) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1); % 
     else
-        BpodSystem.Data.Custom.SidePokeDur(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.ITI(1,2) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
+        BpodSystem.Data.Custom.SidePokeDur(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.ITI(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1);
         if isfield(BpodSystem.Data.RawEvents.Trial{iTrial}.Events,ChoicePortOut)
             candidates = BpodSystem.Data.RawEvents.Trial{iTrial}.Events.(ChoicePortOut);
-            candidates = candidates(candidates>BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1));
+            candidates = candidates(candidates>BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1));
             if BpodSystem.Data.Custom.Grace(iTrial)
                 candidates = candidates(candidates>BpodSystem.Data.RawEvents.Trial{iTrial}.States.(graceState)(end,end));
             end
             if ~isempty(candidates)
-                BpodSystem.Data.Custom.SidePokeDur(iTrial) = min(candidates) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
+                BpodSystem.Data.Custom.SidePokeDur(iTrial) = min(candidates) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1);
             end
         end
     end

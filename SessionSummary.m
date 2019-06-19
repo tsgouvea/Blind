@@ -59,10 +59,12 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     
     hold(GUIHandles.Axes.StimGuided.MainHandle,'on')
     GUIHandles.Axes.StimGuided.StimGuided = line(GUIHandles.Axes.StimGuided.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[166,101,195]/255,'Visible','on','linewidth',3);
+    GUIHandles.Axes.StimGuided.PerfBlind = text(1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
+    GUIHandles.Axes.StimGuided.PerfStimGuided = text(0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
 %     GUIHandles.Axes.StimGuided.Value = line(GUIHandles.Axes.StimGuided.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[254,167,53]/255,'Visible','on','linewidth',3);
-    GUIHandles.Axes.StimGuided.MainHandle.XLabel.String = 'Stim guided';
-    GUIHandles.Axes.StimGuided.MainHandle.YLabel.String = 'Not stim guided';
-    GUIHandles.Axes.StimGuided.MainHandle.Title.String = 'Stim guided';
+    GUIHandles.Axes.StimGuided.MainHandle.XLabel.String = 'Blind choice';
+    GUIHandles.Axes.StimGuided.MainHandle.YLabel.String = 'Stim guided';
+    GUIHandles.Axes.StimGuided.MainHandle.Title.String = 'Blind vs Stim guided';
     
     %% Time Wagering
 %     hold(GUIHandles.Axes.Wager.MainHandle,'on')
@@ -204,8 +206,16 @@ if nargin > 0
 
     %% Stim Guided
     
-    GUIHandles.Axes.StimGuided.StimGuided.XData = cumsum(Data.Custom.StimGuided(1:end-1)==1);
-    GUIHandles.Axes.StimGuided.StimGuided.YData = cumsum(Data.Custom.StimGuided(1:end-1)==0);
+    GUIHandles.Axes.StimGuided.StimGuided.XData = cumsum(Data.Custom.StimGuided(1:end-1)==0);
+    GUIHandles.Axes.StimGuided.StimGuided.YData = cumsum(Data.Custom.StimGuided(1:end-1)==1);
+    
+    GUIHandles.Axes.StimGuided.PerfBlind = text(1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
+    GUIHandles.Axes.StimGuided.PerfStimGuided = text(0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
+    
+    ndx = ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.StimGuided==0;
+    perfBlind = (Data.Custom.ChoiceLeft(ndx) == Data.Custom.BaitL(ndx)) / sum(ndx);
+    set(GUIHandles.Axes.StimGuided.PerfBlind, 'position', [sum(Data.Custom.StimGuided(1:end-1)==0) sum(Data.Custom.StimGuided(1:end-1)==1)], 'string', ...
+        [num2str(sum(R(:))/1000) ' mL']);
     
 end
 end
