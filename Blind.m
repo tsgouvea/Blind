@@ -39,6 +39,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.ClickTrainDur = 1;
     TaskParameters.GUI.ClickRate = 100;
     TaskParameters.GUI.EarlySoutPenalty = 0;
+    TaskParameters.GUI.StimGuidedErrorPenalty = 8;
     TaskParameters.GUI.RewardDelay = .2; % From click train onset
     TaskParameters.GUI.Grace = 0.1;
     TaskParameters.GUIPanels.SidePorts = {'BNCout','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay','MinCutoff','ClickTrainDur','ClickRate','EarlySoutPenalty','RewardDelay','Grace'};
