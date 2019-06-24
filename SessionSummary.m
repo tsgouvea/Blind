@@ -23,8 +23,8 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
 
     %% Outcome
     axes(GUIHandles.Axes.OutcomePlot.MainHandle)
-    GUIHandles.Axes.OutcomePlot.StimL = line(-1,.75, 'LineStyle','none','Marker','^','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
-    GUIHandles.Axes.OutcomePlot.StimR = line(-1,.25, 'LineStyle','none','Marker','v','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
+    GUIHandles.Axes.OutcomePlot.StimL = line(-1,.75, 'LineStyle','none','Marker','^','MarkerEdge','k','MarkerFace','none', 'MarkerSize',5);
+    GUIHandles.Axes.OutcomePlot.StimR = line(-1,.25, 'LineStyle','none','Marker','v','MarkerEdge','k','MarkerFace','none', 'MarkerSize',5);
     GUIHandles.Axes.OutcomePlot.Fict = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace','none', 'MarkerSize',8);
     GUIHandles.Axes.OutcomePlot.CurrentTrialCircle = line(-1,0.5, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.CurrentTrialCross = line(-1,0.5, 'LineStyle','none','Marker','+','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
@@ -59,8 +59,8 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     
     hold(GUIHandles.Axes.StimGuided.MainHandle,'on')
     GUIHandles.Axes.StimGuided.StimGuided = line(GUIHandles.Axes.StimGuided.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[166,101,195]/255,'Visible','on','linewidth',3);
-    GUIHandles.Axes.StimGuided.PerfBlind = text(1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
-    GUIHandles.Axes.StimGuided.PerfStimGuided = text(0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
+    GUIHandles.Axes.StimGuided.PerfBlind = text(GUIHandles.Axes.StimGuided.MainHandle,0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
+    GUIHandles.Axes.StimGuided.PerfStimGuided = text(GUIHandles.Axes.StimGuided.MainHandle,1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
 %     GUIHandles.Axes.StimGuided.Value = line(GUIHandles.Axes.StimGuided.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[254,167,53]/255,'Visible','on','linewidth',3);
     GUIHandles.Axes.StimGuided.MainHandle.XLabel.String = 'Blind choice';
     GUIHandles.Axes.StimGuided.MainHandle.YLabel.String = 'Stim guided';
@@ -153,7 +153,7 @@ if nargin > 0
     R = R.*C;
     set(GUIHandles.Axes.OutcomePlot.CumRwd, 'position', [iTrial+1 1], 'string', ...
         [num2str(sum(R(:))/1000) ' mL']);
-    clear R C
+    clear C
 
     %% Trial rate
     GUIHandles.Axes.TrialRate.TrialRate.XData = (Data.TrialStartTimestamp-min(Data.TrialStartTimestamp))/60;
@@ -167,39 +167,41 @@ if nargin > 0
     %% CenterPokeDur
     cla(GUIHandles.Axes.CenterPokeDur.MainHandle)
     temp = Data.Custom.CenterPokeDur;
-    temp = min(temp,prctile(temp,99));
+    temp2 = min(temp,prctile(temp,99));
+    temp2(isnan(temp)) = nan;
     GUIHandles.Axes.CenterPokeDur.Hist = histogram(GUIHandles.Axes.CenterPokeDur.MainHandle,...
-        temp);
-    GUIHandles.Axes.CenterPokeDur.Hist.BinWidth = 50;
+        temp2);
+    GUIHandles.Axes.CenterPokeDur.Hist.BinWidth = .05;
     GUIHandles.Axes.CenterPokeDur.Hist.EdgeColor = 'none';
     GUIHandles.Axes.CenterPokeDur.HistEarly = histogram(GUIHandles.Axes.CenterPokeDur.MainHandle,...
         temp(Data.Custom.BrokeFix));
-    GUIHandles.Axes.CenterPokeDur.HistEarly.BinWidth = 50;
+    GUIHandles.Axes.CenterPokeDur.HistEarly.BinWidth = .05;
     GUIHandles.Axes.CenterPokeDur.HistEarly.EdgeColor = 'none';
     GUIHandles.Axes.CenterPokeDur.CutOff = plot(GUIHandles.Axes.CenterPokeDur.MainHandle,TaskParameters.GUI.StimDelay,0,'^k');
 
     %% Feedback delay
     cla(GUIHandles.Axes.SidePokeDur.MainHandle)
     temp = Data.Custom.SidePokeDur;
-    temp = min(temp,prctile(temp,99));
+    temp2 = min(temp,prctile(temp,99));
+    temp2(isnan(temp)) = nan;
     if isfield(TaskParameters,'GUIMeta') && strcmp(TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection},'TruncExp')
-        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(Data.Custom.Rewarded));
+        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp2(Data.Custom.Rewarded));
         %GUIHandles.Axes.SidePokeDur.Hist.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.Hist.EdgeColor = 'none';
-        GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.Rewarded));
+        GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp2(~Data.Custom.Rewarded));
         %GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = 50;
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
         GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay,0,'^k');
         GUIHandles.Axes.SidePokeDur.Expected = plot(GUIHandles.Axes.SidePokeDur.MainHandle,...
-            min(temp):max(temp),...
-            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp):max(temp),TaskParameters.GUI.FeedbackDelayTau),'c');
+            min(temp2):max(temp2),...
+            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp2):max(temp2),TaskParameters.GUI.FeedbackDelayTau),'c');
     else
-        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp(~Data.Custom.EarlySout));
-        GUIHandles.Axes.SidePokeDur.Hist.BinWidth = 50;
+        GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp2(~Data.Custom.EarlySout));
+        GUIHandles.Axes.SidePokeDur.Hist.BinWidth = .05;
         GUIHandles.Axes.SidePokeDur.Hist.EdgeColor = 'none';
         GUIHandles.Axes.SidePokeDur.HistEarly = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,...
-            temp(Data.Custom.EarlySout));
-        GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = 50;
+            temp2(Data.Custom.EarlySout));
+        GUIHandles.Axes.SidePokeDur.HistEarly.BinWidth = .05;
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
         GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay,0,'^k');
     end
@@ -209,13 +211,18 @@ if nargin > 0
     GUIHandles.Axes.StimGuided.StimGuided.XData = cumsum(Data.Custom.StimGuided(1:end-1)==0);
     GUIHandles.Axes.StimGuided.StimGuided.YData = cumsum(Data.Custom.StimGuided(1:end-1)==1);
     
-    GUIHandles.Axes.StimGuided.PerfBlind = text(1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
-    GUIHandles.Axes.StimGuided.PerfStimGuided = text(0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
+%     GUIHandles.Axes.StimGuided.PerfBlind = text(1,0,'0.0','verticalalignment','bottom','horizontalalignment','center');
+%     GUIHandles.Axes.StimGuided.PerfStimGuided = text(0,1,'0.0','verticalalignment','bottom','horizontalalignment','center');
     
-    ndx = ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.StimGuided==0;
-    perfBlind = (Data.Custom.ChoiceLeft(ndx) == Data.Custom.BaitL(ndx)) / sum(ndx);
-    set(GUIHandles.Axes.StimGuided.PerfBlind, 'position', [sum(Data.Custom.StimGuided(1:end-1)==0) sum(Data.Custom.StimGuided(1:end-1)==1)], 'string', ...
-        [num2str(sum(R(:))/1000) ' mL']);
+    ndxBlind = ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.StimGuided==0;
+    perfBlind = sum(Data.Custom.ChoiceLeft(ndxBlind) == Data.Custom.BaitedL(ndxBlind)) / sum(ndxBlind);
+    set(GUIHandles.Axes.StimGuided.PerfBlind, 'position', [.9*sum(Data.Custom.StimGuided(1:end-1)==0) .1*sum(Data.Custom.StimGuided(1:end-1)==1)], 'string', ...
+        [sprintf('%0.2f',perfBlind)]);
+    
+    ndxStimGuided = ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.StimGuided==1;
+    perfStimGuided = sum(Data.Custom.ChoiceLeft(ndxStimGuided) == Data.Custom.BaitedL(ndxStimGuided)) / sum(ndxStimGuided);
+    set(GUIHandles.Axes.StimGuided.PerfStimGuided, 'position', [.1*sum(Data.Custom.StimGuided(1:end-1)==0) .9*sum(Data.Custom.StimGuided(1:end-1)==1)], 'string', ...
+        [sprintf('%0.2f',perfStimGuided)]);
     
 end
 end
