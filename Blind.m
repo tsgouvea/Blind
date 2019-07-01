@@ -88,14 +88,18 @@ BpodSystem.SoftCodeHandlerFunction = 'SoftCodeHandler';
 if BpodSystem.Data.Custom.BaitedL
     BpodSystem.Data.Custom.LeftClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
     BpodSystem.Data.Custom.RightClickTrain{1} = min(BpodSystem.Data.Custom.LeftClickTrain{1});
+    vL = ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5;
+    vR = zeros(1,length(BpodSystem.Data.Custom.RightClickTrain{1}));
 else
     BpodSystem.Data.Custom.RightClickTrain{1} = GeneratePoissonClickTrain(TaskParameters.GUI.ClickRate,TaskParameters.GUI.ClickTrainDur);
     BpodSystem.Data.Custom.LeftClickTrain{1} = min(BpodSystem.Data.Custom.RightClickTrain{1});
+    vL = zeros(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}));
+    vR = ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5;
 end
 if ~BpodSystem.EmulatorMode
     ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamStimulus);
-    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.RightClickTrain{1}))*5);
-    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, ones(1,length(BpodSystem.Data.Custom.LeftClickTrain{1}))*5);
+    SendCustomPulseTrain(1, BpodSystem.Data.Custom.RightClickTrain{1}, vR);
+    SendCustomPulseTrain(2, BpodSystem.Data.Custom.LeftClickTrain{1}, vL);
 end
 
 %% Initialize plots
