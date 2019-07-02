@@ -193,8 +193,8 @@ if nargin > 0
         GUIHandles.Axes.SidePokeDur.HistEarly.EdgeColor = 'none';
         GUIHandles.Axes.SidePokeDur.CutOff = plot(GUIHandles.Axes.SidePokeDur.MainHandle,TaskParameters.GUI.FeedbackDelay,0,'^k');
         GUIHandles.Axes.SidePokeDur.Expected = plot(GUIHandles.Axes.SidePokeDur.MainHandle,...
-            min(temp2):max(temp2),...
-            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * iTrial) * exppdf(min(temp2):max(temp2),TaskParameters.GUI.FeedbackDelayTau),'c');
+            linspace(min(temp2),max(temp2),100),...
+            (GUIHandles.Axes.SidePokeDur.Hist.BinWidth * sum(Data.Custom.Rewarded)) * exppdf(linspace(min(temp2),max(temp2),100),TaskParameters.GUI.FeedbackDelayTau),'c');
     else
         GUIHandles.Axes.SidePokeDur.Hist = histogram(GUIHandles.Axes.SidePokeDur.MainHandle,temp2(~Data.Custom.EarlySout));
         GUIHandles.Axes.SidePokeDur.Hist.BinWidth = .05;
